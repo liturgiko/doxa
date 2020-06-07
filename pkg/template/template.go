@@ -10,7 +10,6 @@ import (
 	"github.com/liturgiko/doxa/pkg/ldp"
 	"time"
 )
-
 /*
 ATEM is an Abstract Template.
 ID is the identifier for the template and should match a corresponding path in the file system or an ID in a database.
@@ -21,6 +20,9 @@ Month, Day, Year are used when the Type = service.
 HtmlCss is the file path or database ID for the css file to be used for the template.
 PDF contains information for creating PDF files, e.g. title, Header and Footer information, and the CSS to use.
 LDP holds the liturgical day properties for the specified Year, Month, and Day.
+Libraries is an array that holds the library identifiers to be bound to each topic-key and the fall back libraries to use if a topic/key for the primary library does not exist.
+TKs is an array of the topic/keys used in the template. It is a set--no duplicates.
+LTKValues is a map whose keys are IDs (library/topic/key) and the value is the one found in a database for that ID.
 Paragraphs holds an array of Paragraph. The information in a paragraph should be used by a generator of HTML or a PDF (or anything else that has rows), the information in a Paragraph is used 1..n times depending on how many libraries have been requested by the user. Each table row in an HTML document or PDF file will have a cell for each requested library, and content as specified by the paragraph.
  */
 type ATEM struct {
@@ -32,6 +34,9 @@ type ATEM struct {
 	HtmlCss          string
 	PDF              *PDF
 	LDP              ldp.LDP
+	Libraries		 []LibraryAndFallBacks
+	TKs              []string
+	LTKValues        map[string]string
 	Paragraphs       []*Paragraph
 }
 // SetLDPYMD sets the Liturgical Day Properties to the supplied month, day, and year
@@ -45,6 +50,19 @@ func (a *ATEM) SetLDPYMD(month, day, year int, calendarType calendarTypes.Calend
 	a.Month = month
 	a.Day = day
 	return nil
+}
+// AddTopicKey adds a topic/key to the TK array if the topic/key does not already exist.
+func (a *ATEM) AddTopicKey(tk string) {
+	_, found := Find(a.TKs,tk)
+	if !found {
+		a.TKs = append(a.TKs, tk)
+	}
+}
+// AddLTKValue adds a value to the map of LTKValues if the key (library/topic/key) does not already exist.
+func (a *ATEM) AddLTKValue(ltk, value string) {
+	if v := a.LTKValues[ltk]; v == "" {
+		a.LTKValues[ltk] = value
+	}
 }
 // SetLDPMD sets the Liturgical Day Properties to current year, and supplied month and day
 func (a *ATEM) SetLDPMD(month, day int, calendarType calendarTypes.CalendarType) error {
@@ -81,6 +99,11 @@ func (a *ATEM) SetLDP() error {
 }
 func (a *ATEM) AddParagraph(p Paragraph) {
 	a.Paragraphs = append(a.Paragraphs, &p)
+}
+// LibraryAndFallBacks contains a Library requested by a user to use during generation, and an array of fall back libraries to use if the primary library does not have a required topic/key.
+type LibraryAndFallBacks struct {
+	Library string
+	FallBacks []string
 }
 type PDF struct {
 	CSS string
@@ -455,4 +478,12 @@ func (p *Paragraph) AddVersion() {
 	vs.Class = "versiondesignation"
 	vs.TopicKey = "properties/version.designation"
 	p.Version = *vs
+}
+func Find(slice []string, val string) (int, bool) {
+	for i, item := range slice {
+		if item == val {
+			return i, true
+		}
+	}
+	return -1, false
 }
