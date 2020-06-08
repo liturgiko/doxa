@@ -10,8 +10,10 @@ import (
 	"github.com/liturgiko/doxa/pkg/ldp"
 	"time"
 )
+const IDPathDelimiter = "/"
 /*
 ATEM is an Abstract Template.
+Use the function NewATEM() to get a pointer to an ATEM.  Otherwise the maps will be nil.
 ID is the identifier for the template and should match a corresponding path in the file system or an ID in a database.
 Type is block, book, or service.
 Status values are na, draft, review, or final.
@@ -20,9 +22,9 @@ Month, Day, Year are used when the Type = service.
 HtmlCss is the file path or database ID for the css file to be used for the template.
 PDF contains information for creating PDF files, e.g. title, Header and Footer information, and the CSS to use.
 LDP holds the liturgical day properties for the specified Year, Month, and Day.
-Libraries is an array that holds the library identifiers to be bound to each topic-key and the fall back libraries to use if a topic/key for the primary library does not exist.
-TKs is an array of the topic/keys used in the template. It is a set--no duplicates.
-LTKValues is a map whose keys are IDs (library/topic/key) and the value is the one found in a database for that ID.
+GenLibs is a slice that holds the primary library and fallback libraries to be bound to each topic-key. The fallback libraries are used if the combination of the primary library and a topic/key does not exist.
+Versions is a map whose key is a library and value is the library's acronym. The acronym is used as the value for an @Ver directive to insert the version.
+Values is a map whose keys are topic/key and the value is a slice with the index of each element corresponding to the index in the GenLibs slice. The value retrieved from a database is stored as well.
 Paragraphs holds an array of Paragraph. The information in a paragraph should be used by a generator of HTML or a PDF (or anything else that has rows), the information in a Paragraph is used 1..n times depending on how many libraries have been requested by the user. Each table row in an HTML document or PDF file will have a cell for each requested library, and content as specified by the paragraph.
  */
 type ATEM struct {
@@ -34,10 +36,16 @@ type ATEM struct {
 	HtmlCss          string
 	PDF              *PDF
 	LDP              ldp.LDP
-	Libraries		 []LibraryAndFallBacks
-	TKs              []string
-	LTKValues        map[string]string
+	GenLibs			 []GenLib
+	Versions 		 map[string]string
+	Values           map[string]TKVal
 	Paragraphs       []*Paragraph
+}
+func NewATEM() *ATEM {
+	atem := new(ATEM)
+	atem.Versions = make(map[string]string)
+	atem.Values = make(map[string]TKVal)
+	return atem
 }
 // SetLDPYMD sets the Liturgical Day Properties to the supplied month, day, and year
 func (a *ATEM) SetLDPYMD(month, day, year int, calendarType calendarTypes.CalendarType) error {
@@ -51,17 +59,14 @@ func (a *ATEM) SetLDPYMD(month, day, year int, calendarType calendarTypes.Calend
 	a.Day = day
 	return nil
 }
-// AddTopicKey adds a topic/key to the TK array if the topic/key does not already exist.
-func (a *ATEM) AddTopicKey(tk string) {
-	_, found := Find(a.TKs,tk)
-	if !found {
-		a.TKs = append(a.TKs, tk)
-	}
-}
-// AddLTKValue adds a value to the map of LTKValues if the key (library/topic/key) does not already exist.
-func (a *ATEM) AddLTKValue(ltk, value string) {
-	if v := a.LTKValues[ltk]; v == "" {
-		a.LTKValues[ltk] = value
+// AddLTKValue adds a value to the map of LTKValues if the key (topic/key) does not already exist.
+func (a *ATEM) AddTKValues(topicKey string, tkVal TKVal) {
+	if _, ok := a.Values[topicKey]; ok {
+		// ignore request if already set for this topicKey
+	} else {
+		if &tkVal != nil {
+			a.Values[topicKey] = tkVal
+		}
 	}
 }
 // SetLDPMD sets the Liturgical Day Properties to current year, and supplied month and day
@@ -100,10 +105,48 @@ func (a *ATEM) SetLDP() error {
 func (a *ATEM) AddParagraph(p Paragraph) {
 	a.Paragraphs = append(a.Paragraphs, &p)
 }
-// LibraryAndFallBacks contains a Library requested by a user to use during generation, and an array of fall back libraries to use if the primary library does not have a required topic/key.
-type LibraryAndFallBacks struct {
+func (a *ATEM) AddGenLib(genLib GenLib) {
+	a.GenLibs = append(a.GenLibs, genLib)
+}
+// LTKVal holds a resolved Library/Topic/Key and its value.
+// Resolved means that it was retrieved from a database.
+// Although an ID is library/topic/key, the library is split out
+// to make it easy to get the Version acronym if needed.
+// To get the complete ID, use the ID() method.
+type LTKVal struct {
 	Library string
+	TopicKey string
+	Value string
+}
+// ID returns a concatenation of Library and TopicKey as a valid lml
+func (ltkv *LTKVal) ID() string {
+	return ltkv.Library + IDPathDelimiter + ltkv.TopicKey
+}
+// TKVal holds an slice of LTKVal.  The length of the slice corresponds to the number of columns to be generated, which are actually cells in a row.
+type TKVal struct {
+	Values []LTKVal
+}
+func (tkVal *TKVal) Add(ltkVal LTKVal) {
+	tkVal.Values = append(tkVal.Values, ltkVal)
+}
+// GenLib holds the user's request to generate using a specific library and a slice of fallback libraries to use of the primary library + topic-key does not exist.
+type GenLib struct {
+	Primary string
 	FallBacks []string
+}
+// AddFallback appends a library to the splice of fallback libraries.
+func (g *GenLib) AddFallBack(library string) {
+	g.FallBacks = append(g.FallBacks, library)
+}
+// All flattens the GenLib by returning a string slice of the libraries.
+// The primary library is at the zero index, the fallback libraries are the rest.
+func (g *GenLib) All() []string {
+	var all []string
+	all = append(all, g.Primary)
+	for _, library := range g.FallBacks {
+		all = append(all, library)
+	}
+	return all
 }
 type PDF struct {
 	CSS string

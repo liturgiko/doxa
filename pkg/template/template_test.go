@@ -13,9 +13,9 @@ import (
 func TestParagraph(t *testing.T) {
 	var p Paragraph
 	var s1 Span
-	s1.AddNid("Literal Text")
-	s1.AddSid("actors/Priest")
-	s1.AddRid("oc.*/ocVE.ApolTheotokionVM.text")
+	s1.AddChildSpan(*NewNid("Literal Text"))
+	s1.AddChildSpan(*NewSid("actors/Priest"))
+	s1.AddChildSpan(*NewRid("oc.*/ocVE.ApolTheotokionVM.text",0,0))
 	p.AddSpan(s1)
 	p.AddVersion()
 	j, err := json.MarshalIndent(p, "", " ")

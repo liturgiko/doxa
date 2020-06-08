@@ -1,11 +1,9 @@
 package parser
 
 import (
-	SQL "database/sql"
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/emirpasic/gods/stacks/arraystack"
-	"github.com/liturgiko/doxa/pkg/db/ltx2sql"
 	"github.com/liturgiko/doxa/pkg/enums/calendarTypes"
 	"github.com/liturgiko/doxa/pkg/enums/idTypes"
 	"github.com/liturgiko/doxa/pkg/enums/positions"
@@ -17,21 +15,36 @@ import (
 	"strings"
 )
 
+/*
+LMListener implements the BaseLMLListener for the Liturgical Markup Language.
+ */
 type LMLListener struct {
 	lml.BaseLMLListener
-	ALT template.ATEM
-	LtxMapper ltx2sql.LtxMapper
-	// Emitters []Channel
+	ATEM      *template.ATEM
+	Resolver  Resolver
 }
-func NewLMLListener(dbPath string) (*LMLListener, error) {
+// A Resolver provides an methods for obtaining database values.
+// The Close method tells the resolver to close its database connection.
+// The ExistsTK method returns true if there is at least one record in the database that has this topic/key.
+// The Values method gets the value of each combination of GenLib and topic/key.
+// The Versions method gets the value of each combination of GenLib and the topic/key 'properties/version.designation'
+type Resolver interface {
+	Close()
+	ExistsTK(topicKey string) bool
+	Values(topicKey string, genLibs []template.GenLib) template.TKVal
+	Versions(genLibs []template.GenLib) map[string]string
+}
+
+func NewLMLListener(genLibs []template.GenLib, resolver Resolver) (*LMLListener, error) {
 	l := new(LMLListener)
-	db, err := SQL.Open("sqlite3", dbPath)
-	if err != nil {
-		return nil, err
+	l.Resolver = resolver
+	l.ATEM = template.NewATEM()
+	l.ATEM.Calendar = calendarTypes.Gregorian // can be overridden if set explicitly in template
+	l.ATEM.PDF = new(template.PDF)
+	l.ATEM.GenLibs = genLibs
+	if resolver != nil && genLibs != nil {
+		l.ATEM.Versions = resolver.Versions(genLibs)
 	}
-	l.LtxMapper.DB = db
-	l.ALT.Calendar = calendarTypes.Gregorian // can be overridden if set explicitly in template
-	l.ALT.PDF = new(template.PDF)
 	return l, nil
 }
 func (l *LMLListener) VisitErrorNode(node antlr.ErrorNode) {
@@ -59,7 +72,7 @@ func (l *LMLListener) EnterTemplate(ctx *lml.TemplateContext) {
 
 // ExitTemplate is called when production template is exited.
 func (l *LMLListener) ExitTemplate(ctx *lml.TemplateContext) {
-	l.LtxMapper.DB.Close()
+	if l.Resolver != nil {l.Resolver.Close()}
 }
 
 // EnterProperty is called when production property is entered.
@@ -100,7 +113,7 @@ func (l *LMLListener) EnterInsert(ctx *lml.InsertContext) {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.STRING().GetSymbol(),nil)
 		}
 		// TODO: add check to ensure the id is a valid path to a file (if using file based templates) or is a valid database ID if storing templates in a database.
-		l.ALT.ID = id
+		l.ATEM.ID = id
 	}
 }
 
@@ -128,7 +141,7 @@ func (l *LMLListener) ExitPara(ctx *lml.ParaContext) {
 	if span != nil {
 		paragraph.AddSpan(*span)
 	}
-	l.ALT.AddParagraph(*paragraph)
+	l.ATEM.AddParagraph(*paragraph)
 	span = nil
 	fmt.Print("")
 }
@@ -303,7 +316,7 @@ func AddDirective(d template.PDFDecorator) {
 // EnterDirective is called when production directive is entered.
 func (l *LMLListener) EnterDirective(ctx *lml.DirectiveContext) {
 	if ctx.INSERT_DATE() != nil {
-		dir := template.NewDateDirective("span.date", l.ALT.LDP.TheDay)
+		dir := template.NewDateDirective("span.date", l.ATEM.LDP.TheDay)
 		AddDirective(dir)
 	}
 	if ctx.INSERT_PAGE_NUMBER() != nil {
@@ -394,12 +407,18 @@ func (l *LMLListener) EnterRid(ctx *lml.RidContext) {
 					ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("rid directives (@Mode or @Day) may only be used for topics starting with 'oc' (i.e. Octoechos)"),ctx.STRING().GetSymbol(),nil)
 				}
 			}
-			relativeTopic := l.ALT.LDP.RelativeTopic(parts[0], modeOverride, dayOverride)
-			if ! l.LtxMapper.ExistsTK(relativeTopic,parts[1]) {
-				ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("not found topic/key '%s' does not exist in topic-key rings",id),ctx.STRING().GetSymbol(),nil)
+			relativeTopic := l.ATEM.LDP.RelativeTopic(parts[0], modeOverride, dayOverride)
+			if l.Resolver != nil {
+				if ! l.Resolver.ExistsTK(relativeTopic + template.IDPathDelimiter + parts[1]) {
+					ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("not found topic/key '%s' does not exist in topic-key rings",id),ctx.STRING().GetSymbol(),nil)
+				}
 			}
 		default:
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("mismatched input '%s' expecting only one forward slash in topic/key path",id),ctx.STRING().GetSymbol(),nil)
+		}
+		if l.Resolver != nil {
+			fmt.Println(fmt.Sprintf("%s: %v",id, l.ATEM.GenLibs))
+			l.ATEM.AddTKValues(id, l.Resolver.Values(id, l.ATEM.GenLibs))
 		}
 		if buildingLookup {
 			lookupDirective.AddLookupTK(idTypes.RID, "", id)
@@ -414,19 +433,6 @@ func (l *LMLListener) EnterRid(ctx *lml.RidContext) {
 			} else {
 				span.AddChildSpan(*rid)
 			}
-			//if pspan == nil {
-			//	if span == nil {
-			//		paragraph.AddSpan(*rid)
-			//	} else {
-			//		span.AddChildSpan(*rid)
-			//	}
-			//} else {
-			//	if span == nil  {
-			//		pspan.AddChildSpan(*rid)
-			//	} else {
-			//		span.AddChildSpan(*rid)
-			//	}
-			//}
 		}
 	}
 }
@@ -448,11 +454,16 @@ func (l *LMLListener) EnterSid(ctx *lml.SidContext) {
 		case 1:
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("mismatched input '%s' expecting at least one forward slash in topic/key path",id),ctx.STRING().GetSymbol(),nil)
 		case 2:
-			if ! l.LtxMapper.ExistsTK(parts[0],parts[1]) {
-				ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("not found topic/key '%s' does not exist in topic-key rings",id),ctx.STRING().GetSymbol(),nil)
+			if l.Resolver != nil {
+				if !l.Resolver.ExistsTK(id) {
+					ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("not found topic/key '%s' does not exist in topic-key rings", id), ctx.STRING().GetSymbol(), nil)
+				}
 			}
 		default:
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("mismatched input '%s' expecting only one forward slash in topic/key path",id),ctx.STRING().GetSymbol(),nil)
+		}
+		if l.Resolver != nil {
+			l.ATEM.AddTKValues(id, l.Resolver.Values(id, l.ATEM.GenLibs))
 		}
 		if buildingLookup {
 			lookupDirective.AddLookupTK(idTypes.SID, "", id)
@@ -497,9 +508,9 @@ func (l *LMLListener) EnterTmplCalendar(ctx *lml.TmplCalendarContext) {
 		} else {
 			switch 	strings.ToLower(value) {
 			case "gregorian":
-				l.ALT.Calendar = calendarTypes.Gregorian
+				l.ATEM.Calendar = calendarTypes.Gregorian
 			case "julian":
-				l.ALT.Calendar = calendarTypes.Julian
+				l.ATEM.Calendar = calendarTypes.Julian
 			default:
 				ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("invalid calendar type '%s'. Expected one of %v",value,calendarTypes.CalendarTypeValues()),ctx.STRING().GetSymbol(),nil)
 			}
@@ -517,7 +528,7 @@ func (l *LMLListener) EnterTmplHtmlCss(ctx *lml.TmplHtmlCssContext) {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.STRING().GetSymbol(),nil)
 		}
 		// TODO: check for existence of css
-		l.ALT.HtmlCss = value
+		l.ATEM.HtmlCss = value
 	}
 }
 
@@ -532,7 +543,7 @@ func (l *LMLListener) EnterTmplPdfCss(ctx *lml.TmplPdfCssContext) {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.STRING().GetSymbol(),nil)
 		}
 		// TODO: check for existence of css
-		l.ALT.PDF.CSS = value
+		l.ATEM.PDF.CSS = value
 	}
 }
 
@@ -547,8 +558,8 @@ func (l *LMLListener) EnterTmplDay(ctx *lml.TmplDayContext) {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s", err), ctx.INTEGER().GetSymbol(), nil)
 		}
 		if value > 0 && value < 32 {
-			l.ALT.Day = value
-			l.ALT.SetLDP()
+			l.ATEM.Day = value
+			l.ATEM.SetLDP()
 		} else {
 			msg := fmt.Sprintf("invalid Day %d, expected value between 1 and 31", value)
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s", msg), ctx.INTEGER().GetSymbol(), nil)
@@ -573,7 +584,7 @@ func (l *LMLListener) EnterTmplID(ctx *lml.TmplIDContext) {
 		if ! strings.Contains(id, "/") {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("mismatched input '%s' expecting at least one forward slash in ID path",id),ctx.STRING().GetSymbol(),nil)
 		}
-		l.ALT.ID = id
+		l.ATEM.ID = id
 	}
 }
 
@@ -588,7 +599,7 @@ func (l *LMLListener) EnterTmplMonth(ctx *lml.TmplMonthContext) {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.INTEGER().GetSymbol(),nil)
 		}
 		if value > 0 && value < 13 {
-			l.ALT.Month = value
+			l.ATEM.Month = value
 		} else {
 			msg := fmt.Sprintf("invalid Month %d, expected value between 1 and 12",value)
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",msg),ctx.INTEGER().GetSymbol(),nil)
@@ -611,7 +622,7 @@ func (l *LMLListener) EnterTmplPageHeader(ctx *lml.TmplPageHeaderContext) {
 }
 
 func (l *LMLListener) ExitTmplPageHeader(ctx *lml.TmplPageHeaderContext) {
-	l.ALT.PDF.AddHeader(*pageHeader)
+	l.ATEM.PDF.AddHeader(*pageHeader)
 }
 
 func (l *LMLListener) EnterTmplPageFooter(ctx *lml.TmplPageFooterContext) {
@@ -625,7 +636,7 @@ func (l *LMLListener) EnterTmplPageFooter(ctx *lml.TmplPageFooterContext) {
 }
 
 func (l *LMLListener) ExitTmplPageFooter(ctx *lml.TmplPageFooterContext) {
-	l.ALT.PDF.AddFooter(*pageFooter)
+	l.ATEM.PDF.AddFooter(*pageFooter)
 }
 
 func (l *LMLListener) EnterTmplPageHeaderEven(ctx *lml.TmplPageHeaderEvenContext) {
@@ -666,7 +677,7 @@ func (l *LMLListener) EnterTmplPageNumber(ctx *lml.TmplPageNumberContext) {
 		if err != nil {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.INTEGER().GetSymbol(),nil)
 		}
-		l.ALT.PDF.PageNbr = value
+		l.ATEM.PDF.PageNbr = value
 	}
 }
 
@@ -687,7 +698,7 @@ func (l *LMLListener) EnterTmplStatus(ctx *lml.TmplStatusContext) {
 			msg := fmt.Sprintf("invalid template Status \"%s\", expected one of %s", raw, statuses.StatusValues())
 			ctx.GetParser().NotifyErrorListeners(msg,ctx.STRING().GetSymbol(),nil)
 		} else {
-			l.ALT.Status = status
+			l.ATEM.Status = status
 		}
 	}
 }
@@ -702,7 +713,7 @@ func (l *LMLListener) EnterTmplTitle(ctx *lml.TmplTitleContext) {
 		if err != nil {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.STRING().GetSymbol(),nil)
 		}
-		l.ALT.PDF.Title = value
+		l.ATEM.PDF.Title = value
 	}
 }
 
@@ -722,7 +733,7 @@ func (l *LMLListener) EnterTmplType(ctx *lml.TmplTypeContext) {
 			msg := fmt.Sprintf("invalid template Type \"%s\", expected one of %s", raw, templateTypes.TemplateTypeValues())
 			ctx.GetParser().NotifyErrorListeners(msg,ctx.STRING().GetSymbol(),nil)
 		} else {
-			l.ALT.Type = tmplType
+			l.ATEM.Type = tmplType
 		}
 	}
 }
@@ -737,8 +748,8 @@ func (l *LMLListener) EnterTmplYear(ctx *lml.TmplYearContext) {
 		if err != nil {
 			ctx.GetParser().NotifyErrorListeners(fmt.Sprintf("%s",err),ctx.INTEGER().GetSymbol(),nil)
 		}
-		l.ALT.Year = value
-		l.ALT.SetLDP()
+		l.ATEM.Year = value
+		l.ATEM.SetLDP()
 	}
 }
 

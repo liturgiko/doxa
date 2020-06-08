@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/liturgiko/doxa/pkg/template"
 	lml "gitlab.com/ocmc/liturgiko/lml-go/parser"
 )
 
@@ -18,8 +19,14 @@ type LML struct {
 	Input string
 }
 // NewLMLParser provides an LML instance with a lexer and parser initialized for the input stream.
-// Returns an error if the database path is invalid or there is an error opening the database
-func NewLMLParser(templateID, input, dbPath string) (*LML, error) {
+// Upon completion of the parsing, a slice of parse errors will be available, and a template.ATEM will be populated.
+// If the ATEM will be used for generating HTML or PDF or something else, then genLibs and resolver may not be nil.
+// If genLibs and resolver are nil, the purpose of calling the parser is presumed to be simply to validate the syntax of the input.
+// If genLibs and resolver are not nil, they will be used to populate the Values and Version acronyms in the ATEM, so it can be used for generation.
+// Returns an error if the database path is invalid.
+// templateID is the id of the template.
+// genLibs provides the primary libraries and fallback libraries to use for generation. If
+func NewLMLParser(templateID, input string, genLibs []template.GenLib, resolver Resolver) (*LML, error) {
 	l := new(LML)
 	var err error
 	l.TemplateID = templateID
@@ -27,7 +34,7 @@ func NewLMLParser(templateID, input, dbPath string) (*LML, error) {
 	l.Lexer = lml.NewLMLLexer(antlr.NewInputStream(input))
 	stream := antlr.NewCommonTokenStream(l.Lexer, antlr.TokenDefaultChannel)
 	l.Parser = lml.NewLMLParser(stream)
-	l.Listener, err = NewLMLListener(dbPath)
+	l.Listener, err = NewLMLListener(genLibs, resolver)
 	if err != nil {
 		return nil, err
 	}

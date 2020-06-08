@@ -5,14 +5,62 @@ import (
 	"fmt"
 	"github.com/liturgiko/doxa/pkg/enums/statuses"
 	"github.com/liturgiko/doxa/pkg/enums/templateTypes"
-	"os"
+	"github.com/liturgiko/doxa/pkg/template"
 	"testing"
 )
 
-var dbPath = os.Getenv("dbPath")
-
+type MockResolver struct {
+	tkMap map[string]bool // used by the mock ExistsTK method
+	values map[string]string // used by the mock Values and Versions methods
+}
+func (r *MockResolver) AddTK(tk string)  {
+	r.tkMap[tk] = true
+}
+func (r *MockResolver) AddValue(id, value string)  {
+	r.values[id] = value
+}
+func (r *MockResolver) Close()  {}
+func (r *MockResolver) ExistsTK(topicKey string) bool {
+	return r.tkMap[topicKey]
+}
+func (r *MockResolver) Values(topicKey string, genLibs []template.GenLib) template.TKVal  {
+	var tkVal = new(template.TKVal)
+	for _, genLib := range genLibs {
+		for _, library := range genLib.All() {
+			var ltkValue template.LTKVal
+			ltkValue.Library = library
+			ltkValue.TopicKey = topicKey
+			ltkValue.Value = r.values[ltkValue.ID()]
+		}
+	}
+	return *tkVal
+}
+func (r *MockResolver) Versions(genLibs []template.GenLib) map[string]string  {
+	var mock = map[string]string{}
+	for _, genLib := range genLibs {
+		for _, library := range genLib.All() {
+			mock[library] = r.values[library + template.IDPathDelimiter + "properties/version.designation"]
+		}
+	}
+	return mock
+}
+var genLibs []template.GenLib
+var resolver MockResolver
 func init() {
-	// open the database
+	var genLib = new(template.GenLib)
+	genLib.Primary = "gr_gr_cog"
+	genLibs = append(genLibs, *genLib)
+	genLib = new(template.GenLib)
+	genLib.Primary = "en_us_goa"
+	genLib.AddFallBack("en_us_dedes")
+
+	resolver.tkMap = make(map[string]bool)
+	resolver.values = make(map[string]string)
+	resolver.tkMap["template.titles/ve.pdf.header"] = true
+	resolver.tkMap["da.d2/daVE.OnTheEveningBefore"] = true
+	resolver.tkMap["actors/Deacon"] = true
+	resolver.tkMap["rubrical/InALowVoice"] = true
+	resolver.tkMap["rubrical/Thrice"] = true
 }
 func TestLML_Errors(t *testing.T) {
 	input := `ID == "xy"
@@ -21,9 +69,9 @@ Status = "drafty"
 Month = 66
 Day = 33
 if BadID == 1 { insert "actors/Priest"" }`
-	lml, err := NewLMLParser("a/b",input, dbPath)
+	lml, err := NewLMLParser("a/b",input, genLibs, &resolver)
 	if err != nil {
-		t.Errorf("could not open database %s", dbPath)
+		t.Errorf("%s", err)
 	}
 	for _, error := range lml.WalkTemplate() {
 		fmt.Println(error.StringVerbose())
@@ -76,60 +124,60 @@ p.actor span.it sid "actors/Deacon" (span.rubric sid "rubrical/InALowVoice" ( sp
   //p.actor span.rditbd sid "actors/Deacon" span.rubric sid "rubrical/InALowVoice" span.bk nid "But, loud enough to be heard."
   // p.actor span.rditbd sid "actors/Deacon" (span.rubric sid "rubrical/InALowVoice") span.bk nid "But, loud enough to be heard."
 }`
-	lml, err := NewLMLParser("a/b",input, dbPath)
+	lml, err := NewLMLParser("a/b",input, genLibs, &resolver)
 	if err != nil {
-		t.Errorf("could not open database %s", dbPath)
+		t.Errorf("%s", err)
 	}
 	for _, error := range lml.WalkTemplate() {
 		t.Error(error.StringVerbose())
 	}
-	if lml.Listener.ALT.ID != "ages/Dated-Services/m01/d06/se.m01.d06.li" {
-		t.Errorf(fmt.Sprintf("got ID = %s, expected %s", lml.Listener.ALT.ID, "ages/Dated-Services/m01/d06/se.m01.d06.li"))
+	if lml.Listener.ATEM.ID != "ages/Dated-Services/m01/d06/se.m01.d06.li" {
+		t.Errorf(fmt.Sprintf("got ID = %s, expected %s", lml.Listener.ATEM.ID, "ages/Dated-Services/m01/d06/se.m01.d06.li"))
 	}
-	if lml.Listener.ALT.Type != templateTypes.Service {
-		t.Errorf(fmt.Sprintf("got Type = %s, expected %s", lml.Listener.ALT.Type.String(), templateTypes.Service))
+	if lml.Listener.ATEM.Type != templateTypes.Service {
+		t.Errorf(fmt.Sprintf("got Type = %s, expected %s", lml.Listener.ATEM.Type.String(), templateTypes.Service))
 	}
-	if lml.Listener.ALT.Status != statuses.Draft {
-		t.Errorf(fmt.Sprintf("got Status = %s, expected %s", lml.Listener.ALT.Status.String(), statuses.Draft))
+	if lml.Listener.ATEM.Status != statuses.Draft {
+		t.Errorf(fmt.Sprintf("got Status = %s, expected %s", lml.Listener.ATEM.Status.String(), statuses.Draft))
 	}
-	if lml.Listener.ALT.HtmlCss != "ages/css/html.css" {
-		t.Errorf(fmt.Sprintf("got HtmlCss = %s, expected %s", lml.Listener.ALT.HtmlCss, "ages/css/html.css"))
+	if lml.Listener.ATEM.HtmlCss != "ages/css/html.css" {
+		t.Errorf(fmt.Sprintf("got HtmlCss = %s, expected %s", lml.Listener.ATEM.HtmlCss, "ages/css/html.css"))
 	}
-	if lml.Listener.ALT.PDF.CSS != "ages/css/pdf.css" {
-		t.Errorf(fmt.Sprintf("got PdfCss = %s, expected %s", lml.Listener.ALT.PDF.CSS, "ages/css/pdf.css"))
+	if lml.Listener.ATEM.PDF.CSS != "ages/css/pdf.css" {
+		t.Errorf(fmt.Sprintf("got PdfCss = %s, expected %s", lml.Listener.ATEM.PDF.CSS, "ages/css/pdf.css"))
 	}
-	if lml.Listener.ALT.PDF.Title != "Divine Liturgy" {
-		t.Errorf(fmt.Sprintf("got Title = %s, expected %s", lml.Listener.ALT.PDF.Title, "Divine Liturgy"))
+	if lml.Listener.ATEM.PDF.Title != "Divine Liturgy" {
+		t.Errorf(fmt.Sprintf("got Title = %s, expected %s", lml.Listener.ATEM.PDF.Title, "Divine Liturgy"))
 	}
-	if lml.Listener.ALT.Month != 1 {
-		t.Errorf(fmt.Sprintf("got Month = %d, expected %d", lml.Listener.ALT.Month, 1))
+	if lml.Listener.ATEM.Month != 1 {
+		t.Errorf(fmt.Sprintf("got Month = %d, expected %d", lml.Listener.ATEM.Month, 1))
 	}
-	if lml.Listener.ALT.Day != 6 {
-		t.Errorf(fmt.Sprintf("got Day = %d, expected %d", lml.Listener.ALT.Day, 6))
+	if lml.Listener.ATEM.Day != 6 {
+		t.Errorf(fmt.Sprintf("got Day = %d, expected %d", lml.Listener.ATEM.Day, 6))
 	}
-	if lml.Listener.ALT.Year != 2020 {
-		t.Errorf(fmt.Sprintf("got Year = %d, expected %d", lml.Listener.ALT.Year, 2020))
+	if lml.Listener.ATEM.Year != 2020 {
+		t.Errorf(fmt.Sprintf("got Year = %d, expected %d", lml.Listener.ATEM.Year, 2020))
 	}
-	if lml.Listener.ALT.PDF.PageNbr != 1 {
-		t.Errorf(fmt.Sprintf("got SetPageNumber = %d, expected %d", lml.Listener.ALT.PDF.PageNbr, 1))
+	if lml.Listener.ATEM.PDF.PageNbr != 1 {
+		t.Errorf(fmt.Sprintf("got SetPageNumber = %d, expected %d", lml.Listener.ATEM.PDF.PageNbr, 1))
 	}
-	if lml.Listener.ALT.LDP.TheDay.Year() != 2020 {
-		t.Errorf(fmt.Sprintf("got LDP year = %d, expected %d", lml.Listener.ALT.LDP.TheDay.Year(), 2020))
+	if lml.Listener.ATEM.LDP.TheDay.Year() != 2020 {
+		t.Errorf(fmt.Sprintf("got LDP year = %d, expected %d", lml.Listener.ATEM.LDP.TheDay.Year(), 2020))
 	}
-	if lml.Listener.ALT.LDP.TheDay.Month() != 1 {
-		t.Errorf(fmt.Sprintf("got LDP month = %d, expected %d", lml.Listener.ALT.LDP.TheDay.Month(), 1))
+	if lml.Listener.ATEM.LDP.TheDay.Month() != 1 {
+		t.Errorf(fmt.Sprintf("got LDP month = %d, expected %d", lml.Listener.ATEM.LDP.TheDay.Month(), 1))
 	}
-	if lml.Listener.ALT.LDP.TheDay.Day() != 6 {
-		t.Errorf(fmt.Sprintf("got LDP day = %d, expected %d", lml.Listener.ALT.LDP.TheDay.Day(), 6))
+	if lml.Listener.ATEM.LDP.TheDay.Day() != 6 {
+		t.Errorf(fmt.Sprintf("got LDP day = %d, expected %d", lml.Listener.ATEM.LDP.TheDay.Day(), 6))
 	}
-	json, err := json.MarshalIndent(lml.Listener.ALT, "", " ")
+	json, err := json.MarshalIndent(lml.Listener.ATEM, "", " ")
 	fmt.Println(string(json))
 }
 func TestLML_Tokens(t *testing.T) {
 	input := `ID = "x/y"`
-	lml, err := NewLMLParser("x/y", input, dbPath)
+	lml, err := NewLMLParser("x/y", input, genLibs, &resolver)
 	if err != nil  {
-		t.Errorf("could not open database %s", dbPath)
+		t.Errorf("%s", err)
 	}
 	for _, t := range lml.Tokens() {
 		fmt.Printf("%d:%d %s (%q)\n", t.GetLine(), t.GetColumn(),
