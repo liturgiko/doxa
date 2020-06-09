@@ -11,6 +11,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/jmoiron/sqlx"
 	"github.com/liturgiko/doxa/pkg/css"
+	"github.com/liturgiko/doxa/pkg/enums/calendarTypes"
 	"github.com/liturgiko/doxa/pkg/ldp"
 	"github.com/liturgiko/doxa/pkg/models"
 	"github.com/liturgiko/doxa/pkg/utils/ltfile"
@@ -82,9 +83,9 @@ func (p Command) SetDate(year, month, day int) {
 		theLdp, err = ldp.NewLDP()
 	} else {
 		if year == 0 && month > 0 && day > 0 {
-			theLdp, err = ldp.NewLDPMD(month, day)
+			theLdp, err = ldp.NewLDPMD(month, day, calendarTypes.Gregorian)
 		} else if year > 1583 && month > 0 && day > 0 {
-			theLdp, err = ldp.NewLDPYMD(year, month, day)
+			theLdp, err = ldp.NewLDPYMD(year, month, day, calendarTypes.Gregorian)
 		} else {
 			err = errors.New("year must be 0 or > 1583, month > 0, and day > 0")
 		}
