@@ -1,5 +1,5 @@
 # doxa
-Golang software for creating, generating, and publishing Orthodox Christian liturgical books and services.
-It will replace AGES Liturgical Workbench, an Eclipse Java application.
 
-Please note that this software is under development.  It is not ready for even beta use. 
+## We have moved the repository to [gitlab](https://gitlab.com/ocmc/liturgiko/doxa).
+
+The code here on Github is archived.
