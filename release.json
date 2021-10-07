@@ -1,20 +1,20 @@
 {
    "Description": "Doxa: tools for researchers, translators, and publishers of the Eastern Orthodox Christian liturgical texts.",
-   "ReleaseId": "0.2.11",
-   "ReleaseInfo": "pre-beta",
-   "AvailableFor": [
-      {
+   "ReleaseId": "0.2.5",
+   "ReleaseInfo": "Fixes bug #3",
+   "BinaryMap": {
+      "darwin/amd64": {
          "OS": "darwin",
          "ARCH": "amd64",
          "URL": "https://github.com/liturgiko/homebrew-tap/releases/download/0.2.11/doxa_0.2.11_Darwin_x86_64.tar.gz",
          "SHA256": "1c671f61a599ba9aa8e136e47bcbb315a036cc3f57fb03373d289d72ea9c17da"
       },
-      {
+      "darwin/arm64": {
          "OS": "darwin",
          "ARCH": "arm64",
          "URL": "https://github.com/liturgiko/homebrew-tap/releases/download/0.2.11/doxa_0.2.11_Darwin_arm64.tar.gz",
          "SHA256": "170117df98aea5e145843e3b26937be31357fb4d73de2e1c059b98f60ad92eac"
       }
-   ]
+   }
 }
 
