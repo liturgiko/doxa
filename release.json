@@ -1,19 +1,19 @@
 {
    "Description": "Doxa: tools for researchers, translators, and publishers of the Eastern Orthodox Christian liturgical texts.",
-   "ReleaseId": "v0.2.13",
+   "ReleaseId": "v0.2.14",
    "ReleaseInfo": "doxa with self-updating feature",
    "BinaryMap": {
       "darwin/amd64": {
          "OS": "darwin",
          "ARCH": "amd64",
-         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.13/doxa_0.2.13_Darwin_x86_64.tar.gz",
-         "SHA256": "ae285eb5dd31f45f694faeb4ed49fcb88d4516deb5cf53746ba034f16c9fa33d"
+         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.14/doxa_0.2.14_Darwin_x86_64.tar.gz",
+         "SHA256": "3d0d0f5dff96ae33af8e25f5a311be6f3bec3a87e30a65c5c62072b1bc77ac2f"
       },
       "darwin/arm64": {
          "OS": "darwin",
          "ARCH": "arm64",
-         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.13/doxa_0.2.13_Darwin_arm64.tar.gz",
-         "SHA256": "956bf3ff33f99102cfaba0f13e3d479ca26b740057e1aa257dcd46870d102d22"
+         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.14/doxa_0.2.14_Darwin_arm64.tar.gz",
+         "SHA256": "ab18f54d26453090c902987760fe34f7f02319ea95b9058044bc4df7ed710a67"
       }
    }
 }
