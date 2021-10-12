@@ -1,11 +1,9 @@
 # doxa
 Doxa provides tools for researchers, translators, and publishers of Eastern Orthodox Christian liturgical texts. 
 
-To install / update doxa, use [getdoxa](https://github.com/liturgiko/getdoxa).
+To install doxa, follow the instructions in the releases section to the [right](https://github.com/liturgiko/doxa/releases).
 
-getdoxa reads the release.json file in this repository.
-
-The source code for getdoxa is on [gitlab](https://gitlab.com/ocmc/liturgiko/getdoxa).
+Once doxa has been installed, each time it runs, it reads the release.json file in this repository and updates itself with the consent of the user.
 
 The source code for doxa is also on [gitlab](https://gitlab.com/ocmc/liturgiko/doxa).
 
