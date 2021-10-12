@@ -1,7 +1,7 @@
 {
    "Description": "Doxa: tools for researchers, translators, and publishers of the Eastern Orthodox Christian liturgical texts.",
    "ReleaseId": "v0.2.14",
-   "ReleaseInfo": "doxa with self-updating feature",
+   "ReleaseInfo": "typo fix",
    "BinaryMap": {
       "darwin/amd64": {
          "OS": "darwin",
