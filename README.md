@@ -4,3 +4,5 @@ Doxa provides tools for researchers, translators, and publishers of Eastern Orth
 This repository provides the latest release information and release binaries for a variety of operating systems.
 
 The source code is on [github](https://gitlab.com/ocmc/liturgiko/doxa).
+
+To install / update doxa, use [getdoxa](https://github.com/liturgiko/getdoxa).
