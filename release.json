@@ -1,19 +1,19 @@
 {
    "Description": "Doxa: tools for researchers, translators, and publishers of the Eastern Orthodox Christian liturgical texts.",
-   "ReleaseId": "v0.2.15",
-   "ReleaseInfo": "",
+   "ReleaseId": "v0.2.16",
+   "ReleaseInfo": "Fixes a db mode bug in the freq command.",
    "BinaryMap": {
       "darwin/amd64": {
          "OS": "darwin",
          "ARCH": "amd64",
-         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.15/doxa_0.2.15_Darwin_x86_64.tar.gz",
-         "SHA256": "1cf382e8dc1b5aceebcd255e4d46abe19a918024e7dd1f88b70bec5238a99f8b"
+         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.16/doxa_0.2.16_Darwin_x86_64.tar.gz",
+         "SHA256": "bf3519ac598b4dd9194f801081244dee23bf106a1d69915486c700d7253ec248"
       },
       "darwin/arm64": {
          "OS": "darwin",
          "ARCH": "arm64",
-         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.15/doxa_0.2.15_Darwin_arm64.tar.gz",
-         "SHA256": "47e59ad3c9ad0e6f630c85c67dbda7b81a066434dab186ea347030a89587b5d5"
+         "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.16/doxa_0.2.16_Darwin_arm64.tar.gz",
+         "SHA256": "42f9028db96799063986f9b7d09bf6f0d335487ec79dc4e04e11f3971ab5379d"
       }
    }
 }
