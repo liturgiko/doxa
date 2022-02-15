@@ -7,31 +7,31 @@
       "OS": "darwin",
       "ARCH": "amd64",
       "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.22/doxa_v0.2.22_darwin_amd64.tar.gz",
-      "SHA256": "6234e4c7f4fe62819d2ed03572aaaf48ea8c57ab1027de2bfe6f5cb502bd7c32"
+      "SHA256": "00d52cd5e92466ba80a47419cca2cb476786683e7567e70fa8af037257082512"
     },
     "darwin/arm64": {
       "OS": "darwin",
       "ARCH": "arm64",
       "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.22/doxa_v0.2.22_darwin_arm64.tar.gz",
-      "SHA256": "1c9a09e598df3aa43d445c6e1995e11477e2d7d1aed43f97337fa553978f4a07"
+      "SHA256": "f9218d0e5a26689f5bd5277bf7df8634009096184fab184816488dd66c137614"
     },
     "linux/amd64": {
       "OS": "linux",
       "ARCH": "amd64",
       "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.22/doxa_v0.2.22_linux_amd64.tar.gz",
-      "SHA256": "cdebc3314d25148186b9dfef42f531867d55f849d75a63e1d4859a7ff5e9f9ad"
+      "SHA256": "0c8bd7f64089f29f728843674b9ae068fbb7bac00e0d333a873bb1baefdd1ea6"
     },
     "windows/amd64": {
       "OS": "windows",
       "ARCH": "amd64",
       "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.22/doxa_v0.2.22_windows_amd64.tar.gz",
-      "SHA256": "9c91cd647d121f5b38cac6ed53aa9659e313094ff7e899aa36bf1c4472ce1d2a"
+      "SHA256": "d2f8181a1e2e450149dde0411c9715da34e2b66596cf5a54dd37233e0d23b356"
     },
     "windows/arm64": {
       "OS": "windows",
       "ARCH": "arm64",
       "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.22/doxa_v0.2.22_windows_arm64.tar.gz",
-      "SHA256": "90fb7010e584c88043b45f6102c11df538bec6c19f27db35573801fc9b6aef93"
+      "SHA256": "8253bfc1341bb3f6e8892fa28564974fc9bc1147e321c7b7e1e2487f33ecd51d"
     }
   }
 }
