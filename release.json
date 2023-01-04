@@ -1,35 +1,35 @@
 {
  "Description": "Doxa - tools for researchers, translators, and publishers of the Eastern Orthodox Christian liturgical texts.",
- "ReleaseId": "v0.2.40",
- "ReleaseInfo": "Addresses some generation bugs",
+ "ReleaseId": "v0.2.41",
+ "ReleaseInfo": "Addresses Bugs 166 and 168",
  "BinaryMap": {
   "darwin/amd64": {
    "ARCH": "amd64",
-   "ArchiveName": "doxa_v0.2.40_darwin_amd64.tar.gz",
+   "ArchiveName": "doxa_v0.2.41_darwin_amd64.tar.gz",
    "OS": "darwin",
-   "SHA256": "b6782c24cffd9480f8a06f586d2487fbf5c3e5ec0838a17e441766488d21c706",
-   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.40/doxa_v0.2.40_darwin_amd64.tar.gz"
+   "SHA256": "f938a912eff3c52622f528bcc357341a53060e2d98901ceacaaac84b477c4e0d",
+   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.41/doxa_v0.2.41_darwin_amd64.tar.gz"
   },
   "darwin/arm64": {
    "ARCH": "arm64",
-   "ArchiveName": "doxa_v0.2.40_darwin_arm64.tar.gz",
+   "ArchiveName": "doxa_v0.2.41_darwin_arm64.tar.gz",
    "OS": "darwin",
-   "SHA256": "a9b00d8097b54a5faa9430536e5ce67a22730f1acd77f7945a77b97e0f85d49c",
-   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.40/doxa_v0.2.40_darwin_arm64.tar.gz"
+   "SHA256": "69518f6f973d51d565a6f4d641e0e7e706cf960acd3a216963d23237b2fa5ab3",
+   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.41/doxa_v0.2.41_darwin_arm64.tar.gz"
   },
   "windows/amd64": {
    "ARCH": "amd64",
-   "ArchiveName": "doxa_v0.2.40_windows_amd64.zip",
+   "ArchiveName": "doxa_v0.2.41_windows_amd64.zip",
    "OS": "windows",
-   "SHA256": "a5fd7c9db8ffe68a470941d16d7a36a8fa9620dd7bf0e4bfd5c382cf40b9a3d3",
-   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.40/doxa_v0.2.40_windows_amd64.zip"
+   "SHA256": "5b53d01e0dd80fe18ac1ec9b644ea6a9c8ff64204d60bbfa93a3d071f8876f3a",
+   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.41/doxa_v0.2.41_windows_amd64.zip"
   },
   "windows/arm64": {
    "ARCH": "arm64",
-   "ArchiveName": "doxa_v0.2.40_windows_arm64.zip",
+   "ArchiveName": "doxa_v0.2.41_windows_arm64.zip",
    "OS": "windows",
-   "SHA256": "e0dd6888240fae94099d182abf04e2a950811069672f3ac562bbaf0c7f4af03f",
-   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.40/doxa_v0.2.40_windows_arm64.zip"
+   "SHA256": "ddd63ae1212558b94b513d0d8a0c46ee04cfe183c3f390c97b7bda26dd2331bb",
+   "URL": "https://github.com/liturgiko/doxa/releases/download/v0.2.41/doxa_v0.2.41_windows_arm64.zip"
   }
  }
 }
