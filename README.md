@@ -1,5 +1,7 @@
 # DOXA
 
+DOXA is a [downloadable](https://github.com/liturgiko/doxa/releases) desktop application that provides tools for the creation of Digital Orthodox Akolouthia for use in Eastern Orthodox Christian services.  
+
 #### Please note that this software is under development.  It is in alpha version testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
 
 ### How to Download and Install DOXA
@@ -18,9 +20,7 @@ The DOXA user guide has not been developed yet.  Generating a Liturgical Website
 
 A production website generated using DOXA is [Liturgia Digital](https://liturgia.mx), which is a Spanish Digital Chant Stand.
 
-## About
-
-DOXA is a [downloadable](https://github.com/liturgiko/doxa/releases) desktop application that provides tools for the creation of Digital Orthodox Akolouthia for use in Eastern Orthodox Christian services.  
+## Purpose
 
 Its primary purpose is provide translators of the Eastern Orthodox Christian liturgical texts with functionality similar to [ParaText](https://paratext.org) for Bible translators, providing them information to consider as they create their translation.
 
