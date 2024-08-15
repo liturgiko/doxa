@@ -1,12 +1,22 @@
 # DOXA
 
-DOXA is a desktop application that provides tools for the creation and publication of Digital Orthodox Akolouthia (DOXA) for use in Eastern Orthodox Christian services.  It is available for download [here](https://github.com/liturgiko/doxa/releases).
+DOXA is a desktop application that provides tools for users to create or enter translations of Eastern Orthodox Christian Akolouthia (services) and publish Digital Orthodox Akolouthia as a website for use in liturgical services. It is available for download [here](https://github.com/liturgiko/doxa/releases). 
 
-## Sample Websites
+## Sample Websites Created Using DOXA
 
-[Liturgia Digital](https://liturgia.mx) is a Spanish liturgical website in use by the Greek Orthodox Metropolis of Mexico, with use in Mexico, Central America, the Carribean, and parts of South America. The Digital Orthodox Akolouthia (services) are generated using DOXA.
+[Liturgia Digital](https://liturgia.mx) is a Spanish liturgical website in use by the Greek Orthodox Metropolis of Mexico, with use in Mexico, Central America, the Carribean, and parts of South America. The Digital Orthodox Akolouthia (services) are generated using DOXA.  In addition to Spanish, it provides akolouthia (services) in English and Greek.
 
-#### Please note that this software is under development.  It is in alpha version testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
+A second DOXA generated website with Digital Orthodox Akolouthia is under development for [East Africa](https://eac.liml.org) and will provide services in Swahili, English, French, and Greek. 
+
+Both of the above websites are produced by members of [OCMC](https://ocmc.org) who are conducting pre-beta testing of DOXA.  OCMC has plans to use DOXA to produce Digital Orthodox Akolouthia (services) in other languages around the world.
+
+In the USA, the Greek Orthodox Archdiocese of America plans to use DOXA to replace the current software they use to produce the [GOA Digital Chant Stand](https://dcs.goarch.org).  
+
+For the Orthodox Church in America (OCA), the first public release of DOXA will include features to met the needs for the formatting of hymns. 
+
+DOXA is designed for to produce Digital Orthodox Akolouthia for any language, as spoken in any country, for any jurisdiction.    
+
+#### Please note that this software is under development.  It is in pre-beta testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
 
 ### How to Download and Install DOXA
 
