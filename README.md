@@ -1,6 +1,10 @@
 # DOXA
 
-DOXA is a [downloadable](https://github.com/liturgiko/doxa/releases) desktop application that provides tools for the creation of Digital Orthodox Akolouthia for use in Eastern Orthodox Christian services.  
+DOXA is a desktop application that provides tools for the creation and publication of Digital Orthodox Akolouthia (DOXA) for use in Eastern Orthodox Christian services.  It is available for download [here](https://github.com/liturgiko/doxa/releases).
+
+## Sample Websites
+
+[Liturgia Digital](https://liturgia.mx) is a Spanish liturgical website in use by the Greek Orthodox Metropolis of Mexico, with use in Mexico, Central America, the Carribean, and parts of South America. The Digital Orthodox Akolouthia (services) are generated using DOXA.
 
 #### Please note that this software is under development.  It is in alpha version testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
 
@@ -16,15 +20,11 @@ When DOXA starts up, it will initialize a working directory, create a database, 
 
 The DOXA user guide has not been developed yet.  Generating a Liturgical Website is quite complicated even though we have tried to make it as easy as possible.  Without training, or a user guide, it is very challenging to use DOXA.  So, we recommend that you wait.  
 
-## Sample Websites
+## Purpose of DOXA
 
-A production website generated using DOXA is [Liturgia Digital](https://liturgia.mx), which is a Spanish Digital Chant Stand.
+DOXA is not machine translation software. It does not translate.  Its primary purpose is provide human translators of the Eastern Orthodox Christian Akolouthia, liturgical services, with functionality similar to [ParaText](https://paratext.org) for Bible translators, providing them information that they need as they create their translation.
 
-## Purpose
-
-Its primary purpose is provide translators of the Eastern Orthodox Christian liturgical texts with functionality similar to [ParaText](https://paratext.org) for Bible translators, providing them information to consider as they create their translation.
-
-However, the initial public release of DOXA focuses on publication of liturgical texts.  It will allow translators to *Prepare* their translations and *Protect* them from accidental loss or unauthorized changes.  It will also provide the means to *Publish* translations as PDF files for commercial printing of service books and to publish an entire liturgical website with service books and daily services with variable parts.  An example website currently generated using DOXA tools is [liturgia.mx](https://liturgia.mx).  DOXA can generate PDFs and website content in up to three languages side-by-side.
+However, the initial public release of DOXA focuses on publication of liturgical services.  It will allow translators to *Prepare* their translations and *Protect* them from accidental loss or unauthorized changes.  It will also provide the means to *Publish* translations as PDF files for commercial printing of service books and to publish an entire liturgical website with service books and daily services with variable parts.  An example website currently generated using DOXA tools is [liturgia.mx](https://liturgia.mx).  DOXA can generate PDFs and website content in up to three languages side-by-side.
 
 After the initial public release of DOXA, future releases will add features similar to *ParaText*. The  *Prepare* functionality will be expanded to provide tools to create and view exegetical resources, known as *Liturgical Translators Handbooks*, patterned on the United Bible Societies *Translators Handbooks* series for Bible translators. In both Biblical and liturgical text translation, such handbooks are a critical quality assurance tool.  They are used by translators to understand the meaning of the source text, potential translation issues, and how these issues might be addressed.  They are used by translator project advisors working with people translating the texts into their native language. Translation advisors are individuals qualified in theology, linguistics, translation theory and practice, and project management, who live with the people and have become fluent in their language.   Translators Handbooks are also used by translation consultants, to confirm the quality of the translators, assisting the translation team to remove any identified inaccuracies.  In support of the translation quality assurance process, DOXA will add the ability to *Plan* and manage translation projects, *Participate* as a member of a translation team, and to *Prove* the accuracy and understandability of the translations.
 
