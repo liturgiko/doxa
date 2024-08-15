@@ -12,9 +12,19 @@ Both of the above websites are produced by members of [OCMC](https://ocmc.org) w
 
 In the USA, the Greek Orthodox Archdiocese of America plans to use DOXA to replace the current software they use to produce the [GOA Digital Chant Stand](https://dcs.goarch.org).  
 
-For the Orthodox Church in America (OCA), the first public release of DOXA will include features to met the needs for the formatting of hymns. 
+DOXA is not just for the Greek Orthodox.
 
 DOXA is designed for to produce Digital Orthodox Akolouthia for any language, as spoken in any country, for any jurisdiction.    
+
+For the Orthodox Church in America (OCA), the first public release of DOXA will include features to meet the needs for the formatting of hymns. 
+
+We are looking for an Orthodox Christian who is proficient in reading and writing Arabic to work with us to perfect DOXA's ability to accurately handle the contextual forms or variants of the letters when generating PDF files.  When that is complete, DOXA will be able to bilingual services for the Antiochian Orthodox Christian Archdiocese of North America. 
+
+### Disclaimer
+
+Software such as DOXA, and its predecessor ALWB, are powerful tools for generating daily services with the variable parts, but require a user who is skilled in the Typikon of their jurisdiction and who takes the time to enter translations and create or modify template files as needed. Fr. Seraphim Dedes, who generates the GOA DCS using ALWB, said without the software, it took him three weeks of every month to produce just Sunday matin services for the following month and publish them to a website as PDF files.  With ALWB, he is able to generate all daily services for 3-6 months at a time.  DOXA will replace ALWB and provide additional capabilities.
+
+We will develop and provide a DOXA user guide and training materials in the coming year.
 
 #### Please note that this software is under development.  It is in pre-beta testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
 
