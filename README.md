@@ -14,7 +14,7 @@ In the USA, the Greek Orthodox Archdiocese of America plans to use DOXA to repla
 
 DOXA is not just for the Greek Orthodox.
 
-DOXA is designed for to produce Digital Orthodox Akolouthia for any language, as spoken in any country, for any jurisdiction.    
+DOXA is designed to produce Digital Orthodox Akolouthia for any language, as spoken in any country, for any jurisdiction.    
 
 For the Orthodox Church in America (OCA), the first public release of DOXA will include features to meet the needs for the formatting of hymns. 
 
