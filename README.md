@@ -1,6 +1,6 @@
 # DOXA
 
-DOXA is a desktop application that provides tools for users to create or enter translations of Eastern Orthodox Christian Akolouthia (services) and publish Digital Orthodox Akolouthia as a website for use in liturgical services. It is available for download [here](https://github.com/liturgiko/doxa/releases). 
+DOXA is downloadable open-source software that provides tools for users to create or enter translations of Eastern Orthodox Christian Akolouthia (services) and publish Digital Orthodox Akolouthia as a website for use in liturgical services. It is freely available for download by clicking on the word _Releases_ to the right.  You will find installation instructions there. 
 
 ## Sample Websites Created Using DOXA
 
