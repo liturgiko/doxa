@@ -26,11 +26,11 @@ Software such as DOXA, and its predecessor ALWB, are powerful tools for generati
 
 We will develop and provide a DOXA user guide and training materials in the coming year.
 
-#### Please note that this software is under development.  It is in pre-beta testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
-
 ### How to Download and Install DOXA
 
 _Currently, the window's version of DOXA has some issues._  
+
+#### Please note that this software is under development.  It is in pre-beta testing with a small group of users.  We hope to have a beta-test version ready in 2025 and will invite certain individuals to participate in testing it. Until then, do not attempt to use DOXA unless you are one of our alpha version testers.
 
 The DOXA executable files for Mac OS and Windows can be downloaded by clicking the word _Releases_ on the right, and following the instructions found there.  
 
